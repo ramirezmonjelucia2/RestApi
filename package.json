@@ -7,7 +7,9 @@
     "doc": "doc"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "ts": "tsc -w",
+    "dev": "nodemon ./build/server.js",
+    "start": "node ./build/server.js"
   },
   "keywords": [],
   "author": "",
@@ -16,6 +18,8 @@
     "@types/node": "^16.11.9"
   },
   "dependencies": {
-    "mongoose": "^6.0.13"
+    "express": "^4.17.1",
+    "mongoose": "^6.1.2",
+    "nodemon": "^2.0.15"
   }
 }
