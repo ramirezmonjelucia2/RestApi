@@ -108,7 +108,7 @@ class DatoRoutes {
 
     misRutas() {
         this._router.get('/viviendas', this.getViviendas)
-        this._router.get('/viviendas/:tipo', this.getTypes)
+        this._router.get('/viviendas/:type', this.getTypes)
         this._router.post('/auto', this.postAutos)
 
     }
