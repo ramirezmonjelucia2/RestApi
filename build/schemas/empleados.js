@@ -14,5 +14,8 @@ const empleadoSchema = new mongoose_1.Schema({
         default: 950
     },
     "_ventas": Array,
+    "_complemento": Number,
+    "_comisionventa": Number,
+    "_horasxdia": Number
 });
 exports.modeloEmpleado = (0, mongoose_1.model)('empleados', empleadoSchema);

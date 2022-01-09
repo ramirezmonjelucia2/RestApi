@@ -1,6 +1,7 @@
 import { Request, Response, Router } from 'express'
 import { db } from '../utilidades/database'
 import { modeloVivienda, totVivi } from '../schemas/viviendas'
+import { modeloEmpleado } from '../schemas/empleados'
 
 class DatoRoutes {
     private _router: Router
@@ -50,7 +51,7 @@ class DatoRoutes {
 
 
 
-    private postAutos = async (req: Request, res: Response) => {
+    private postVivienda = async (req: Request, res: Response) => {
         const { _tipoObjeto,
             _idVivienda,
             _largo,
@@ -67,7 +68,7 @@ class DatoRoutes {
             _piscina,
             _largojardin,
             _anchojardin,
-            _cochera } = req.body
+            _cochera } = req.body //!!!!!!!!!!!!!!!!!!!!!!!!!req.body no req.param
 
         await db.conectarBD()
         let dSchemaViv: totVivi = {
@@ -100,17 +101,61 @@ class DatoRoutes {
         }
         const oSchema = new modeloVivienda(dSchemaViv)
         await oSchema.save()
-            .then((doc: any) => res.send("El automovil introducido es: " + doc))
+            .then((doc: any) => res.send("La vivienda es: " + doc))
             .catch((err: any) => res.send('Error: ' + err))
         await db.desconectarBD()
     }
 
 
+
+    private updateEmpleado = async (req: Request, res: Response) => {
+        const { idEmpleado } = req.params
+        const { tipo, nombre, sueldobase, ventas, complemento, comision, horas } = req.body
+        await db.conectarBD()
+        await modeloEmpleado.findOneAndUpdate({
+            "_idEmpleado": idEmpleado,
+        }, {
+
+            "_tipoObjeto": tipo,
+            "_nombre": nombre,
+            "_sueldobase": sueldobase,
+            "_ventas": ventas,
+            "_complemento": complemento,
+            "_comisionventa": comision,
+            "_horasxdia": horas
+        }, {
+            new: true,
+            runValidators: true
+        }
+        )
+            .then((doc: any) => res.send("Actualizado: " + doc))
+            .catch((err: any) => res.send('Error: ' + err))
+        await db.desconectarBD()
+    }
+    private deleteEmpleado = async (req: Request, res: Response) => {
+        const { idEmp } = req.params
+        await db.conectarBD()
+        await modeloEmpleado.findOneAndDelete(
+            {
+                "_idEmpleado": idEmp
+            }
+        )
+            .then((doc: any) => {
+                if (doc == null) {
+                    res.send(`No encontrado`)
+                } else {
+                    res.send('Borrado correcto: ' + doc)
+                }
+            })
+            .catch((err: any) => res.send('Error: ' + err))
+        db.desconectarBD()
+    }
     misRutas() {
         this._router.get('/viviendas', this.getViviendas)
         this._router.get('/viviendas/:type', this.getTypes)
-        this._router.post('/auto', this.postAutos)
-
+        this._router.post('/vivienda', this.postVivienda)
+        this._router.put('/empleado/:idEmpleado', this.updateEmpleado)
+        this._router.delete('/deleteEmp/:idEmp', this.deleteEmpleado)
     }
 }
 

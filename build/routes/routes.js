@@ -13,6 +13,7 @@ exports.routes = void 0;
 const express_1 = require("express");
 const database_1 = require("../utilidades/database");
 const viviendas_1 = require("../schemas/viviendas");
+const empleados_1 = require("../schemas/empleados");
 class DatoRoutes {
     constructor() {
         this.getViviendas = (req, res) => __awaiter(this, void 0, void 0, function* () {
@@ -43,8 +44,8 @@ class DatoRoutes {
             });
             yield database_1.db.desconectarBD();
         });
-        this.postAutos = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            const { _tipoObjeto, _idVivienda, _largo, _ancho, municipio, ciudad, codpost, habitaciones, baños, ascensor, equipamiento0, equipamiento1, equipamiento2, _piscina, _largojardin, _anchojardin, _cochera } = req.body;
+        this.postVivienda = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            const { _tipoObjeto, _idVivienda, _largo, _ancho, municipio, ciudad, codpost, habitaciones, baños, ascensor, equipamiento0, equipamiento1, equipamiento2, _piscina, _largojardin, _anchojardin, _cochera } = req.body; //!!!!!!!!!!!!!!!!!!!!!!!!!req.body no req.param
             yield database_1.db.conectarBD();
             let dSchemaViv = {
                 "_tipoObjeto": _tipoObjeto,
@@ -75,9 +76,48 @@ class DatoRoutes {
             };
             const oSchema = new viviendas_1.modeloVivienda(dSchemaViv);
             yield oSchema.save()
-                .then((doc) => res.send("El automovil introducido es: " + doc))
+                .then((doc) => res.send("La vivienda es: " + doc))
                 .catch((err) => res.send('Error: ' + err));
             yield database_1.db.desconectarBD();
+        });
+        this.updateEmpleado = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            const { idEmpleado } = req.params;
+            const { tipo, nombre, sueldobase, ventas, complemento, comision, horas } = req.body;
+            yield database_1.db.conectarBD();
+            yield empleados_1.modeloEmpleado.findOneAndUpdate({
+                "_idEmpleado": idEmpleado,
+            }, {
+                "_tipoObjeto": tipo,
+                "_nombre": nombre,
+                "_sueldobase": sueldobase,
+                "_ventas": ventas,
+                "_complemento": complemento,
+                "_comisionventa": comision,
+                "_horasxdia": horas
+            }, {
+                new: true,
+                runValidators: true
+            })
+                .then((doc) => res.send("Actualizado: " + doc))
+                .catch((err) => res.send('Error: ' + err));
+            yield database_1.db.desconectarBD();
+        });
+        this.deleteEmpleado = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            const { idEmp } = req.params;
+            yield database_1.db.conectarBD();
+            yield empleados_1.modeloEmpleado.findOneAndDelete({
+                "_idEmpleado": idEmp
+            })
+                .then((doc) => {
+                if (doc == null) {
+                    res.send(`No encontrado`);
+                }
+                else {
+                    res.send('Borrado correcto: ' + doc);
+                }
+            })
+                .catch((err) => res.send('Error: ' + err));
+            database_1.db.desconectarBD();
         });
         this._router = (0, express_1.Router)();
     }
@@ -87,7 +127,9 @@ class DatoRoutes {
     misRutas() {
         this._router.get('/viviendas', this.getViviendas);
         this._router.get('/viviendas/:type', this.getTypes);
-        this._router.post('/auto', this.postAutos);
+        this._router.post('/vivienda', this.postVivienda);
+        this._router.put('/empleado/:idEmpleado', this.updateEmpleado);
+        this._router.delete('/deleteEmp/:idEmp', this.deleteEmpleado);
     }
 }
 const obj = new DatoRoutes();

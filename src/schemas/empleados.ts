@@ -12,6 +12,9 @@ const empleadoSchema = new Schema({
         default: 950
     },
     "_ventas": Array,
+    "_complemento": Number,
+    "_comisionventa": Number,
+    "_horasxdia": Number
 })
 
 
