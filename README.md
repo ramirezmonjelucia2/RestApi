@@ -1,4 +1,4 @@
-# PROYECTO 1 EVALUACIÓN TYPESCRIPT
+# PROYECTO 2 EVALUACIÓN ANGULAR
 
 _Realizado por Lucía Ramírez Monje 2ºAsir_
 
